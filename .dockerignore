@@ -1,0 +1,11 @@
+node_modules
+build
+.react-router
+.git
+.env
+data/pdf
+docs
+Makefile
+compose.yaml
+Containerfile
+dist
