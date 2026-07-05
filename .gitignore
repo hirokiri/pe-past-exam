@@ -1,0 +1,10 @@
+.env
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# エクスポート成果物（Vivliostyle）
+/dist/

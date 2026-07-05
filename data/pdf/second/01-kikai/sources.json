@@ -1,0 +1,22 @@
+{
+  "description": "技術士第二次試験 機械部門 過去問題PDFの出典一覧（日本技術士会公式サイト）",
+  "downloadedAt": "2026-07-06",
+  "baseUrl": "https://www.engineer.or.jp",
+  "indexPage": "https://www.engineer.or.jp/c_categories/index02022221.html",
+  "files": [
+    { "file": "r07_hisshu.pdf", "year": "r07", "yearLabel": "令和7年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/011/attached/attach_11161_1.pdf" },
+    { "file": "r06_hisshu.pdf", "year": "r06", "yearLabel": "令和6年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/010/attached/attach_10351_1.pdf" },
+    { "file": "r05_hisshu.pdf", "year": "r05", "yearLabel": "令和5年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/009/attached/attach_9631_1.pdf" },
+    { "file": "r04_hisshu.pdf", "year": "r04", "yearLabel": "令和4年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/008/attached/attach_8847_1.pdf" },
+    { "file": "r03_hisshu.pdf", "year": "r03", "yearLabel": "令和3年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/007/attached/attach_7912_1.pdf" },
+    { "file": "r02_hisshu.pdf", "year": "r02", "yearLabel": "令和2年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/007/attached/attach_7392_1.pdf" },
+    { "file": "r01_hisshu.pdf", "year": "r01", "yearLabel": "令和元年度", "subject": "必須科目", "url": "https://www.engineer.or.jp/c_topics/006/attached/attach_6640_1.pdf" },
+    { "file": "r07_0103.pdf", "year": "r07", "yearLabel": "令和7年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/011/attached/attach_11161_4.pdf" },
+    { "file": "r06_0103.pdf", "year": "r06", "yearLabel": "令和6年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/010/attached/attach_10351_4.pdf" },
+    { "file": "r05_0103.pdf", "year": "r05", "yearLabel": "令和5年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/009/attached/attach_9631_4.pdf" },
+    { "file": "r04_0103.pdf", "year": "r04", "yearLabel": "令和4年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/008/attached/attach_8847_4.pdf" },
+    { "file": "r03_0103.pdf", "year": "r03", "yearLabel": "令和3年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/007/attached/attach_7912_4.pdf" },
+    { "file": "r02_0103.pdf", "year": "r02", "yearLabel": "令和2年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/007/attached/attach_7392_4.pdf" },
+    { "file": "r01_0103.pdf", "year": "r01", "yearLabel": "令和元年度", "subject": "0103 機構ダイナミクス・制御", "url": "https://www.engineer.or.jp/c_topics/006/attached/attach_6640_4.pdf" }
+  ]
+}
