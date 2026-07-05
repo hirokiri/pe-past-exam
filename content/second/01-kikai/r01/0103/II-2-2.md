@@ -4,7 +4,7 @@ exam: second
 examLabel: 技術士第二次試験
 division: "01"
 divisionLabel: 機械部門
-subject: 0103
+subject: "0103"
 subjectLabel: 機構ダイナミクス・制御
 year: r01
 yearLabel: 令和元年度
