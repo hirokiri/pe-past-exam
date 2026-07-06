@@ -63,7 +63,15 @@ function manuscriptName(q: Question): string {
 
 /** 原稿ファイル名から拡張子を除いたもの。見出しの明示idと目次アンカーに使う */
 function docBase(q: Question): string {
-  return manuscriptName(q).replace(/\.md$/, "");
+  const base = manuscriptName(q).replace(/\.md$/, "");
+  // VFM の {#id} 属性と URL フラグメントの両方で安全な文字だけを許す
+  // （VFM は id 中の . や空白を黙って壊すため、href との一致が取れなくなる）
+  if (!/^[A-Za-z0-9_-]+$/.test(base)) {
+    throw new Error(
+      `原稿名 "${base}" に見出しid・目次アンカーへ使えない文字が含まれています`,
+    );
+  }
+  return base;
 }
 
 /** 画像参照（content相対）を原稿ディレクトリ相対へ張り替えつつ画像をコピーする */
@@ -149,6 +157,9 @@ const config = `module.exports = ${JSON.stringify(
     entry: entries,
     output: outputs,
     workspaceDir: ".vivliostyle",
+    // contents エントリがあるため自動目次は生成されないが、title を省くと
+    // publication.json の目次名が既定の "Table of Contents" になる
+    toc: { title: "目次" },
   },
   null,
   2,

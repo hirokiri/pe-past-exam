@@ -70,7 +70,8 @@ export function buildTocHtml(
     },
   );
 
-  return `<html lang="ja">
+  return `<!doctype html>
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <title>${escapeHtml(title)}</title>
@@ -78,7 +79,7 @@ export function buildTocHtml(
 </head>
 <body>
 <nav id="toc" role="doc-toc">
-<h2>目次</h2>
+<h2>${escapeHtml(title)}</h2>
 <ol>${years.join("\n")}</ol>
 </nav>
 </body>
