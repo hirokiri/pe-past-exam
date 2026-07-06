@@ -16,7 +16,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { compareQuestions, parseQuestionFile } from "../app/lib/content.server";
 import type { Question } from "../app/lib/types";
 
@@ -109,6 +109,17 @@ await writeFile(
   `# ${title}\n\n本書は技術士試験の過去問題に模範解答と解説を付した私的利用のための解説集です。過去問題の著作権は公益社団法人日本技術士会に帰属します。\n`,
 );
 
+// ページ下部中央にページ番号を印字するテーマCSS（PDFなどページ組版時のみ効く）
+await writeFile(
+  join(EXPORT_DIR, "theme.css"),
+  `@page {
+  @bottom-center {
+    content: counter(page);
+  }
+}
+`,
+);
+
 // 3. vivliostyle.config.cjs の生成とビルド
 const outputs: { path: string; format: string }[] = [];
 if (formats.includes("pdf"))
@@ -124,6 +135,7 @@ const config = `module.exports = ${JSON.stringify(
     author: "pe-past-exam",
     language: "ja",
     size: "A4",
+    theme: "./theme.css",
     entryContext: "./manuscript",
     entry: entries,
     output: outputs,
@@ -134,6 +146,10 @@ const config = `module.exports = ${JSON.stringify(
   2,
 )};\n`;
 await writeFile(join(EXPORT_DIR, "vivliostyle.config.cjs"), config);
+
+// vivliostyle の EPUB 出力は出力先ディレクトリを自動作成しないため先に作る
+for (const o of outputs)
+  await mkdir(join(EXPORT_DIR, dirname(o.path)), { recursive: true });
 
 console.log(`${questions.length}問を原稿化しました → ${MANUSCRIPT_DIR}`);
 console.log(`フォーマット: ${outputs.map((o) => o.format).join(", ")}`);
