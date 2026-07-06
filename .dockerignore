@@ -8,4 +8,10 @@ docs
 Makefile
 compose.yaml
 Containerfile
+# dist は除外しつつ export 成果物（PDF/EPUB/ZIP）だけコンテナに含める
+# （buildah は除外ディレクトリ配下のグロブ再包含を解釈しないため親から辿る）
 dist
+!dist/export
+dist/export/*/manuscript
+dist/export/*/.vivliostyle
+dist/export/*/output/*-html
