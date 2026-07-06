@@ -19,6 +19,7 @@ import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import { compareQuestions, parseQuestionFile } from "../app/lib/content.server";
 import type { Question } from "../app/lib/types";
+import { buildTocHtml } from "./export-toc";
 
 const [divisionSlug, formatArg] = process.argv.slice(2);
 if (!divisionSlug) {
@@ -60,6 +61,19 @@ function manuscriptName(q: Question): string {
   return `${q.year}_${q.subject}_${q.path.split("/").at(-1)}`;
 }
 
+/** 原稿ファイル名から拡張子を除いたもの。見出しの明示idと目次アンカーに使う */
+function docBase(q: Question): string {
+  const base = manuscriptName(q).replace(/\.md$/, "");
+  // VFM の {#id} 属性と URL フラグメントの両方で安全な文字だけを許す
+  // （VFM は id 中の . や空白を黙って壊すため、href との一致が取れなくなる）
+  if (!/^[A-Za-z0-9_-]+$/.test(base)) {
+    throw new Error(
+      `原稿名 "${base}" に見出しid・目次アンカーへ使えない文字が含まれています`,
+    );
+  }
+  return base;
+}
+
 /** 画像参照（content相対）を原稿ディレクトリ相対へ張り替えつつ画像をコピーする */
 async function rewriteImages(
   question: Question,
@@ -85,13 +99,15 @@ async function rewriteImages(
   return result;
 }
 
-const entries: { path: string; title: string }[] = [
+const entries: { path: string; title: string; rel?: string }[] = [
   { path: "cover.md", title },
+  { path: "toc.html", title: "目次", rel: "contents" },
 ];
 
 for (const q of questions) {
   const name = manuscriptName(q);
-  const heading = `# ${q.yearLabel}　${q.subjectLabel}　${q.questionNo}\n\n${q.title}\n`;
+  // {#id} はVFMの明示id。目次からのリンクとPDFしおりの移動先になる
+  const heading = `# ${q.yearLabel}　${q.subjectLabel}　${q.questionNo} {#${docBase(q)}}\n\n${q.title}\n`;
   const body = await rewriteImages(q, q.body);
   await writeFile(
     join(MANUSCRIPT_DIR, name),
@@ -103,10 +119,23 @@ for (const q of questions) {
   });
 }
 
-// 表紙ページ（目次は vivliostyle の toc 生成に任せる）
+// 表紙ページ
 await writeFile(
   join(MANUSCRIPT_DIR, "cover.md"),
   `# ${title}\n\n本書は技術士試験の過去問題に模範解答と解説を付した私的利用のための解説集です。過去問題の著作権は公益社団法人日本技術士会に帰属します。\n`,
+);
+
+// 目次ページ（年度 → 科目 → 問題 のネスト構造。vivliostyle は nav に
+// 子要素がある contents エントリを自動生成せずそのまま採用する）
+await writeFile(
+  join(MANUSCRIPT_DIR, "toc.html"),
+  buildTocHtml(questions, {
+    title: "目次",
+    hrefFor: (q) => {
+      const base = docBase(q);
+      return `${base}.html#${base}`;
+    },
+  }),
 );
 
 // ページ下部中央にページ番号を印字するテーマCSS（PDFなどページ組版時のみ効く）
@@ -140,7 +169,9 @@ const config = `module.exports = ${JSON.stringify(
     entry: entries,
     output: outputs,
     workspaceDir: ".vivliostyle",
-    toc: { title: "目次", htmlPath: "toc.html", sectionDepth: 1 },
+    // contents エントリがあるため自動目次は生成されないが、title を省くと
+    // publication.json の目次名が既定の "Table of Contents" になる
+    toc: { title: "目次" },
   },
   null,
   2,
