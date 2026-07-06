@@ -178,4 +178,24 @@ if (code !== 0) {
   console.error("vivliostyle build が失敗しました");
   process.exit(code);
 }
+
+// webpub はディレクトリのため、Webのダウンロードボタン用に ZIP も作る
+// （app/routes/download.ts が output/<division>-html.zip を配信する）
+if (formats.includes("webpub")) {
+  const outputDir = join(EXPORT_DIR, "output");
+  const zipName = `${divisionSlug}-html.zip`;
+  await rm(join(outputDir, zipName), { force: true });
+  const zip = Bun.spawn(["zip", "-r", "-q", zipName, `${divisionSlug}-html`], {
+    cwd: outputDir,
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+  if ((await zip.exited) !== 0) {
+    // zip 未インストールでも PDF/EPUB には影響しないため警告に留める
+    console.warn(`警告: ${zipName} の作成に失敗しました（zip コマンドを確認）`);
+  } else {
+    console.log(`ZIP化: ${join(outputDir, zipName)}`);
+  }
+}
+
 console.log(`完了: ${join(EXPORT_DIR, "output")}`);
