@@ -16,7 +16,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { compareQuestions, parseQuestionFile } from "../app/lib/content.server";
 import type { Question } from "../app/lib/types";
 import { buildTocHtml } from "./export-toc";
@@ -138,6 +138,17 @@ await writeFile(
   }),
 );
 
+// ページ下部中央にページ番号を印字するテーマCSS（PDFなどページ組版時のみ効く）
+await writeFile(
+  join(EXPORT_DIR, "theme.css"),
+  `@page {
+  @bottom-center {
+    content: counter(page);
+  }
+}
+`,
+);
+
 // 3. vivliostyle.config.cjs の生成とビルド
 const outputs: { path: string; format: string }[] = [];
 if (formats.includes("pdf"))
@@ -153,6 +164,7 @@ const config = `module.exports = ${JSON.stringify(
     author: "pe-past-exam",
     language: "ja",
     size: "A4",
+    theme: "./theme.css",
     entryContext: "./manuscript",
     entry: entries,
     output: outputs,
@@ -165,6 +177,10 @@ const config = `module.exports = ${JSON.stringify(
   2,
 )};\n`;
 await writeFile(join(EXPORT_DIR, "vivliostyle.config.cjs"), config);
+
+// vivliostyle の EPUB 出力は出力先ディレクトリを自動作成しないため先に作る
+for (const o of outputs)
+  await mkdir(join(EXPORT_DIR, dirname(o.path)), { recursive: true });
 
 console.log(`${questions.length}問を原稿化しました → ${MANUSCRIPT_DIR}`);
 console.log(`フォーマット: ${outputs.map((o) => o.format).join(", ")}`);
@@ -193,4 +209,24 @@ if (code !== 0) {
   console.error("vivliostyle build が失敗しました");
   process.exit(code);
 }
+
+// webpub はディレクトリのため、Webのダウンロードボタン用に ZIP も作る
+// （app/routes/download.ts が output/<division>-html.zip を配信する）
+if (formats.includes("webpub")) {
+  const outputDir = join(EXPORT_DIR, "output");
+  const zipName = `${divisionSlug}-html.zip`;
+  await rm(join(outputDir, zipName), { force: true });
+  const zip = Bun.spawn(["zip", "-r", "-q", zipName, `${divisionSlug}-html`], {
+    cwd: outputDir,
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+  if ((await zip.exited) !== 0) {
+    // zip 未インストールでも PDF/EPUB には影響しないため警告に留める
+    console.warn(`警告: ${zipName} の作成に失敗しました（zip コマンドを確認）`);
+  } else {
+    console.log(`ZIP化: ${join(outputDir, zipName)}`);
+  }
+}
+
 console.log(`完了: ${join(EXPORT_DIR, "output")}`);
