@@ -120,6 +120,26 @@ a {
   font-weight: 600;
 }
 
+/* topページ: 主従関係（著作権法32条の引用）の明示 */
+.quotation-notice {
+  margin: 0 0 2rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.quotation-notice h2 {
+  margin: 0.25rem 0;
+  font-size: 1rem;
+}
+
+.quotation-notice p {
+  margin: 0.5rem 0;
+  color: var(--fg-muted);
+}
+
 .division-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -256,14 +276,33 @@ a {
   font-size: 1.15rem;
 }
 
-.question-content h2:nth-of-type(2) {
+.question-rest h2:nth-of-type(1) {
   border-left-color: var(--answer-border);
   background: var(--answer-bg);
 }
 
-.question-content h2:nth-of-type(3) {
+.question-rest h2:nth-of-type(2) {
   border-left-color: var(--explain-border);
   background: var(--explain-bg);
+}
+
+/* 過去問題文の引用枠（著作権法32条: 引用部分の明瞭区分） */
+.question-quote {
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.question-quote > div > :first-child {
+  margin-top: 0;
+}
+
+.question-source {
+  margin-top: 0.75rem;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
 }
 
 .question-content h3 {
@@ -300,7 +339,7 @@ a {
   max-width: 100%;
 }
 
-.question-content blockquote {
+.question-content blockquote:not(.question-quote) {
   margin: 1rem 0;
   padding: 0.25rem 1rem;
   border-left: 4px solid var(--border);
