@@ -229,12 +229,12 @@ a {
   font-size: 1.15rem;
 }
 
-.question-content h2:nth-of-type(2) {
+.question-content .sec-answer {
   border-left-color: var(--answer-border);
   background: var(--answer-bg);
 }
 
-.question-content h2:nth-of-type(3) {
+.question-content .sec-explain {
   border-left-color: var(--explain-border);
   background: var(--explain-bg);
 }
@@ -242,6 +242,13 @@ a {
 .question-content h3 {
   font-size: 1rem;
   margin-top: 1.75rem;
+}
+
+.question-content h3.sec-answer,
+.question-content h3.sec-explain {
+  padding: 0.3rem 0.6rem;
+  border-left-width: 4px;
+  border-left-style: solid;
 }
 
 .question-content table {

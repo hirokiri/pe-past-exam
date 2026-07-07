@@ -56,8 +56,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       <section className="hero">
         <h1>技術士過去問題 模範解答解説集</h1>
         <p>
-          技術士試験の過去問題を「問題 → 模範解答 →
-          解説」の構成で収録しています。 現在
+          技術士試験の過去問題を、設問ごとに「問題 → 模範解答 →
+          解説」と読み進められる構成で収録しています。 現在
           {totalCount}問を収録。
         </p>
         <Link to="/questions" className="button-primary">

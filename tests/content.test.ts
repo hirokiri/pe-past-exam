@@ -43,6 +43,48 @@ describe("parseQuestionFile", () => {
     expect(q.body).toContain("## 解説");
   });
 
+  test("小問あり形式（設問・全体解説）の本文もパースできる", () => {
+    const subQuestionBody = `## 問題
+
+共通リード文です。
+
+## 設問（1）
+
+小問(1)の問題文です。
+
+### 模範解答
+
+設問(1)の模範解答です。
+
+### 解説
+
+設問(1)の解説です。
+
+## 設問（2）
+
+小問(2)の問題文です。
+
+### 模範解答
+
+設問(2)の模範解答です。
+
+## 全体解説
+
+### 出題趣旨
+
+全体にわたる解説です。
+
+### 出典・参考文献
+
+- 出典
+`;
+    const md = VALID_MD.replace(/## 問題[\s\S]*$/, subQuestionBody);
+    const q = parseQuestionFile(md, "second/01-kikai/r07/hisshu/I-1.md");
+    expect(q.body).toContain("## 設問（1）");
+    expect(q.body).toContain("### 模範解答");
+    expect(q.body).toContain("## 全体解説");
+  });
+
   test("必須フィールドが欠けているとエラーになる", () => {
     const broken = VALID_MD.replace("title: テスト問題\n", "");
     expect(() => parseQuestionFile(broken, "broken.md")).toThrow(/title/);
