@@ -8,7 +8,7 @@
 
 ## Step 1: バリデータを新旧2形式対応にする
 
-- [ ] `scripts/validate-content.ts` を更新
+- [x] `scripts/validate-content.ts` を更新
   - 本文に `## 設問` 見出しが含まれる場合の新ルール:
     1. `## 問題` が先頭セクションであること
     2. `## 設問（n）` が1つ以上あり、番号 n が 1 から連番であること
@@ -21,39 +21,39 @@
 
 ## Step 2: 雛形・ドキュメントを新スタイルに更新
 
-- [ ] `scripts/new-question.ts` — 雛形の本文コメントに「小問がある場合は `## 設問（n）` ごとに `### 模範解答`・`### 解説` を続け、全体にわたる解説は `## 全体解説` に書く」旨の TODO ガイドを追記
-- [ ] `docs/PIPELINE.md` — 転記プロンプト例（L36前後）・解答作成プロンプト例（L43-49）・レビューチェックリスト（L56-58）を新構成に合わせて更新
-- [ ] `docs/SPEC.md` — 「記載の順序」節を「小問題ごとに 問題→模範解答→解説（全体にわたる解説は末尾の全体解説に記載可）」へ更新
+- [x] `scripts/new-question.ts` — 雛形の本文コメントに「小問がある場合は `## 設問（n）` ごとに `### 模範解答`・`### 解説` を続け、全体にわたる解説は `## 全体解説` に書く」旨の TODO ガイドを追記
+- [x] `docs/PIPELINE.md` — 転記プロンプト例（L36前後）・解答作成プロンプト例（L43-49）・レビューチェックリスト（L56-58）を新構成に合わせて更新
+- [x] `docs/SPEC.md` — 「記載の順序」節を「小問題ごとに 問題→模範解答→解説（全体にわたる解説は末尾の全体解説に記載可）」へ更新
 - 検証: `bun run scripts/new-question.ts` の出力雛形が validate を通ること（生成→validate→削除）
 
 ## Step 3: テストを新形式カバーに拡張
 
-- [ ] `tests/content.test.ts` — 既存テストは維持しつつ、新形式（設問（1）/（2）＋全体解説）の本文を持つフィクスチャで `parseQuestionFile` が正常にパースできるテストを追加
+- [x] `tests/content.test.ts` — 既存テストは維持しつつ、新形式（設問（1）/（2）＋全体解説）の本文を持つフィクスチャで `parseQuestionFile` が正常にパースできるテストを追加
 - 検証: `bun test`
 
 ## Step 4: コンテンツ42ファイルを新形式へ再構成
 
 対象: `content/second/01-kikai/r01..r07/{hisshu/I-1,I-2, 0103/II-2-1,II-2-2,III-1,III-2}.md`（各年6件×7年）
 
-- [ ] 年度単位（7バッチ）で再構成する。各ファイルについて:
+- [x] 年度単位（7バッチ）で再構成する。各ファイルについて:
   - `## 問題` には共通リード文（選択指示・本文）のみ残し、小問 `（1）`〜`（n）` の原文を各 `## 設問（n）` 直下へ移動（**一字一句改変しない**）
   - `## 模範解答` の `### N. …（設問(n)）` ブロックを対応する `## 設問（n）` の `### 模範解答` へ移動（見出しの番号飾りは除去してよいが本文は維持。結語など設問をまたぐ文は直近の設問側に付ける）
   - `## 解説` の「答案作成のポイント」のうち設問別の記述は各 `### 解説` へ分配し、「出題趣旨」「背景知識」「出典・参考文献」は `## 全体解説` へ
   - frontmatter・status は不変
-- [ ] II-1-x（小問なし）ファイルに触れていないことを `git status` で確認
+- [x] II-1-x（小問なし）ファイルに触れていないことを `git status` で確認
 - リスク: 内容の欠落・取り違え。バッチごとに `bun run validate` を回し、diff の削除行が移動先の追加行に対応することを確認しながら進める
 - 検証: 各バッチ後 `bun run validate`。全バッチ完了後、行数ベースで欠落チェック（再構成前後で本文の実質行数が見出し増分以外で減っていないこと）
 
 ## Step 5: 全体検証とスモーク確認
 
-- [ ] `make check`（typecheck / lint / test / validate）を green にする
-- [ ] `bun run build` が成功すること
-- [ ] run-pe-past-exam スキルでアプリを起動し、新形式ページ（例: r03 hisshu I-1、r03 0103 III-1）と旧形式ページ（II-1-1）の表示をスクリーンショットで確認
-- [ ] `bun run export 01-kikai webpub` がエラーなく完走すること（TOC・原稿生成に影響がないこと）
+- [x] `make check`（typecheck / lint / test / validate）を green にする
+- [x] `bun run build` が成功すること
+- [x] run-pe-past-exam スキルでアプリを起動し、新形式ページ（例: r03 hisshu I-1、r03 0103 III-1）と旧形式ページ（II-1-1）の表示をスクリーンショットで確認
+- [x] `bun run export 01-kikai webpub` がエラーなく完走すること（TOC・原稿生成に影響がないこと）
 
 ## Step 6: セルフレビュー
 
-- [ ] `/self-review per-subquestion-answers` — analyze.md の Acceptance criteria 1〜9 と突き合わせ、code-review を実施し指摘を修正
+- [x] `/self-review per-subquestion-answers` — analyze.md の Acceptance criteria 1〜9 と突き合わせ、code-review を実施し指摘を修正
 
 ## リスク・注意点
 
@@ -74,3 +74,14 @@
 | 7. II-1-x 不変 | Step 4 |
 | 8. ドキュメント・雛形更新 | Step 2 |
 | 9. Web 表示スモーク | Step 5 |
+
+## セルフレビューでの追加修正（実施済み）
+
+7観点の code-review で見つかった以下を修正した:
+
+- **validate-content.ts を全面改修**: セクション構成検証を `scripts/section-rules.ts` へ切り出し（単体テスト可能に）。フェンスコードブロック除外、見出しの完全一致判定、H2セグメント方式（想定外H3で検証が中断しない）、設問本文の存在チェック、全体解説内への ### 模範解答 混入検出を追加。`tests/sections.test.ts`（13ケース）を新設。
+- **app.css / markdown.server.ts**: セクション色分けが h2:nth-of-type 依存で新形式では誤着色になるため、見出しテキストに基づく CSS クラス（sec-question / sec-answer / sec-explain）を renderer で付与する方式へ変更。新旧両形式でスクリーンショット確認済み。
+- **new-question.ts**: 雛形内の新形式案内例が実見出しとして描画される問題をフェンスコードブロック化で修正。
+- **PIPELINE.md**: 転記工程で設問骨組み（### 模範解答 TODO・## 全体解説）まで作る指示を追加（transcribed 中間状態が validate NG になるワークフロー欠陥の解消）。
+- **SPEC.md**: 全体解説セクションの必須性を明文化（validator との矛盾解消）。
+- **README.md / home.tsx / DESIGN.md**: 旧形式のみを前提とした構成説明を新形式対応に更新。
