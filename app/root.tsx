@@ -27,6 +27,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </Link>
           <nav>
             <Link to="/questions">問題を探す</Link>
+            {/* リソースルートへの直接ダウンロードのため Link ではなく a を使う */}
+            <span className="download-links">
+              <span className="download-links-label">ダウンロード:</span>
+              <a href="/downloads/01-kikai/pdf" download>
+                PDF
+              </a>
+              <a href="/downloads/01-kikai/epub" download>
+                EPUB
+              </a>
+              <a href="/downloads/01-kikai/html" download>
+                HTML
+              </a>
+            </span>
           </nav>
         </header>
         <main className="site-main">{children}</main>

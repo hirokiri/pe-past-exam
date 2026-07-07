@@ -65,6 +65,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </Link>
       </section>
 
+      <section className="quotation-notice">
+        <h2>過去問題の掲載について</h2>
+        <p>
+          本サイトは、技術士試験の学習のために独自に作成した模範解答・解説を主たるコンテンツとして提供しています。
+          過去問題の問題文は、解説を行ううえで必要な範囲に限り、著作権法第32条に基づく「引用」として従たる形で掲載しています。
+          引用部分は各ページで枠内に明瞭に区分し、出典（公益社団法人
+          日本技術士会）を明示しています。
+        </p>
+      </section>
+
       {divisions.length === 0 ? (
         <p className="empty">まだコンテンツがありません。</p>
       ) : (

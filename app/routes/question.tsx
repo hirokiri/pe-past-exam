@@ -1,8 +1,8 @@
 import katexCss from "katex/dist/katex.min.css?url";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { findQuestion } from "../lib/content.server";
-import { renderMarkdown } from "../lib/markdown.server";
+import { renderMarkdown, segmentQuestionBody } from "../lib/markdown.server";
 import type { Route } from "./+types/question";
 
 export const links: Route.LinksFunction = () => [
@@ -22,7 +22,20 @@ export function loader({ params }: Route.LoaderArgs) {
     throw new Response("Not Found", { status: 404 });
   }
   const { body, ...meta } = question;
-  return { meta, html: renderMarkdown(body) };
+  // 問題文（引用部分）と模範解答・解説（自作部分）を分けてレンダリングし、
+  // 引用の明瞭区分（著作権法32条）を表示側で行えるようにする。
+  // 小問あり形式では各設問の問題文も引用セグメントになる。
+  const segments = segmentQuestionBody(body) ?? [
+    { quote: false as const, heading: null, markdown: body },
+  ];
+  return {
+    meta,
+    segments: segments.map((s) => ({
+      quote: s.quote,
+      heading: s.heading,
+      html: renderMarkdown(s.markdown),
+    })),
+  };
 }
 
 /** KaTeX（$...$ / $$...$$）と Mermaid をクライアント側でレンダリングする */
@@ -50,7 +63,7 @@ function useContentRendering(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 export default function Question({ loaderData }: Route.ComponentProps) {
-  const { meta, html } = loaderData;
+  const { meta, segments } = loaderData;
   const contentRef = useRef<HTMLDivElement>(null);
   useContentRendering(contentRef);
 
@@ -91,12 +104,34 @@ export default function Question({ loaderData }: Route.ComponentProps) {
         )}
       </header>
 
-      <div
-        ref={contentRef}
-        className="question-content"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: リポジトリ管理のMarkdownをサーバー側で変換したHTMLのみを渡す（外部入力なし）
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div ref={contentRef} className="question-content">
+        {segments.map((seg, i) =>
+          seg.quote ? (
+            // biome-ignore lint/suspicious/noArrayIndexKey: セグメント列はリクエスト内で不変
+            <Fragment key={i}>
+              {seg.heading && <h2 className="sec-question">{seg.heading}</h2>}
+              {/* 過去問題文は著作権法32条の引用として枠で明瞭区分し、出所を明示する */}
+              <blockquote className="question-quote">
+                <div
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: リポジトリ管理のMarkdownをサーバー側で変換したHTMLのみを渡す（外部入力なし）
+                  dangerouslySetInnerHTML={{ __html: seg.html }}
+                />
+                <footer className="question-source">
+                  {`出典：公益社団法人 日本技術士会　${meta.yearLabel}　${meta.examLabel}（${meta.divisionLabel}）　${meta.questionNo}`}
+                </footer>
+              </blockquote>
+            </Fragment>
+          ) : (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: セグメント列はリクエスト内で不変
+              key={i}
+              className="question-rest"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: リポジトリ管理のMarkdownをサーバー側で変換したHTMLのみを渡す（外部入力なし）
+              dangerouslySetInnerHTML={{ __html: seg.html }}
+            />
+          ),
+        )}
+      </div>
     </article>
   );
 }

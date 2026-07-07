@@ -68,7 +68,7 @@ make export DIVISION=01-kikai            # 3形式すべて
 make export DIVISION=01-kikai FORMATS=pdf
 ```
 
-`dist/export/<division>/output/` に生成されます。PDF 生成には Vivliostyle が使用するヘッドレスブラウザ（初回に自動ダウンロード）が必要です。Playwright が対応していない OS では、システムにインストール済みの Google Chrome / Chromium（`/usr/bin/google-chrome` など）を自動的に使用します。
+`dist/export/<division>/output/` に生成されます。生成済みの成果物は Web アプリのヘッダーにあるダウンロードボタン（`/downloads/<division>/<format>`、format は `pdf` / `epub` / `html`）からダウンロードできます（HTML は webpub 一式の ZIP）。PDF 生成には Vivliostyle が使用するヘッドレスブラウザ（初回に自動ダウンロード）が必要です。Playwright が対応していない OS では、システムにインストール済みの Google Chrome / Chromium（`/usr/bin/google-chrome` など）を自動的に使用します。
 
 ## ドキュメント
 
